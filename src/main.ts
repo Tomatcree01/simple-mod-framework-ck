@@ -3,6 +3,7 @@ global.THREE = require("./three-onlymath.min")
 
 import * as Sentry from "@sentry/node"
 import * as Tracing from "@sentry/tracing"
+import * as LosslessJSON from "lossless-json"
 
 import { DateTime, Duration, DurationLikeObject } from "luxon"
 import type { Span, Transaction } from "@sentry/tracing"
@@ -20,17 +21,17 @@ import { xxhash3 } from "hash-wasm"
 require("clarify")
 
 const gameHashes = {
-	"01938677ed843ec2537d8a199c7bcf70": Platform.epic, // base game
-	"58e50911dc615539da83922571ff0426": Platform.epic, // ansel unlock
-	"4889135c28935d701e588c7ba927c95f": Platform.epic, // ansel no collision
-	"69a8ca088e9da9741909ccaec6b70a03": Platform.epic, // ansel unlock + no collision
-	"6584cd7508933bc6438786aabfa7a590": Platform.steam, // base game
-	"fa4d715869c5dfbdaaf1a43a9bacd4e4": Platform.steam, // ansel unlock
-	"05a19bd51eb883a93b4f48040bfbfc48": Platform.steam, // ansel no collision
-	"bf2064565cc80fa0c327d67c335fe5c4": Platform.steam, // ansel unlock + no collision
+	"7ece206ec0cf963b6fb4174e682e34c7": Platform.epic, // base game
+	"fca4ea3830d30a486eb4fed444557827": Platform.epic, // ansel unlock
+	"56130f7cb3df6c7e313a10a8c9050759": Platform.epic, // ansel no collision
+	"ed959d30a4701d9df58f162b3c15dc47": Platform.epic, // ansel unlock + no collision
+	"89fad9435f2c22b06ff977189b198596": Platform.steam, // base game
+	"b08c8bef3f5c3b28d9ca81e537e0fc5d": Platform.steam, // ansel unlock
+	"368df1a22ca8362e713aba745e2af94f": Platform.steam, // ansel no collision
+	"7fd58f4b28b45dc78bcea600a314cdd0": Platform.steam, // ansel unlock + no collision
 
 	// Gamepass/store protects the EXE from reading so we can't hash it, instead we hash the game config
-	"7575c21412be9b85d129a8cef92efb45": Platform.microsoft
+	"f610f65c81a20c1f19f9caf96a63b286": Platform.microsoft
 } as {
 	[k: string]: Platform
 }
@@ -258,7 +259,7 @@ async function doTheThing() {
 		fs.ensureDirSync(path.join(process.env.LOCALAPPDATA!, "Simple Mod Framework"))
 		fs.writeFileSync(
 			path.join(process.env.LOCALAPPDATA!, "Simple Mod Framework", "lastDeploy.json"),
-			JSON.stringify({
+			LosslessJSON.stringify({
 				...core.config,
 				lastServerSideStates
 			})
