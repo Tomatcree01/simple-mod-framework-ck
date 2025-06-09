@@ -21,17 +21,17 @@ import { xxhash3 } from "hash-wasm"
 require("clarify")
 
 const gameHashes = {
-	"e11edfba6fd5d4121fa45b1c7a29376b": Platform.epic, // base game
-	"ca246beded6e1cff132aa4c847d9b29c": Platform.epic, // ansel unlock
+	"80a15db02ca224bc04a7d6fbf142e337": Platform.epic, // base game
+	"65fb9120266ee831320c7e1335ef372d": Platform.epic, // ansel unlock
 	//"09278760d4943ad21d04921169366d54": Platform.epic, // ansel no collision
 	//"a8752bc4b36a74600549778685db3b4c": Platform.epic, // ansel unlock + no collision
-	"a062b0d7a928476a70c5a3b34067544b": Platform.steam, // base game
-	"c4a2a4f33d5b8d2c160452c6e7ff502c": Platform.steam, // ansel unlock
+	"7a9fbcdec866a2621b9f9a2f729053e9": Platform.steam, // base game
+	"8d66dafed0e302a145b5e44a4bb0282e": Platform.steam, // ansel unlock
 	//"28607baf7a75271b6924fe0d52263600": Platform.steam, // ansel no collision
 	//"d028074b654cb628ef88ced7b5d3eb96": Platform.steam, // ansel unlock + no collision
 
 	// Gamepass/store protects the EXE from reading so we can't hash it, instead we hash the game config
-	"44e3b8137b9269026b02404e282e08f3": Platform.microsoft
+	"98829f37ef952bde93e7e625c7a8f05e": Platform.microsoft
 } as {
 	[k: string]: Platform
 }
@@ -211,8 +211,12 @@ async function doTheThing() {
 					// The mod framework manages patch files between 200 (inc) and 300 (inc), allowing mods to place runtime files in those ranges
 					fs.rmSync(path.join(core.config.runtimePath, chunkPatchFile))
 				}
-			} else if (parseInt(chunkPatchFile.split(".")[0].slice(5)) > 29) {
-				fs.rmSync(path.join(core.config.runtimePath, chunkPatchFile))
+			} else if (chunkPatchFile.match(/chunk[0-9]+/)) {
+				if (parseInt(chunkPatchFile.split(".")[0].slice(5)) > 29) {
+					fs.rmSync(path.join(core.config.runtimePath, chunkPatchFile))
+				}
+			} else {
+				await core.logger.warn(`${chunkPatchFile} in your Runtime folder is not from the vanilla game. This might cause issues with SMF!`)
 			}
 		} catch {}
 	}
